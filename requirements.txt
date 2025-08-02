@@ -1,0 +1,6 @@
+langgraph
+openai
+python-dotenv
+notion-client
+requests
+langchain 
