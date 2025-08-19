@@ -1,6 +1,6 @@
 # StoryWeaverAI
 
-An AI-powered story generation system that creates original short stories using LangGraph agents and Azure OpenAI, stores them in Notion as structured entries, and delivers them via Telegram using n8n automation.
+A Simple AI-powered story generation system that creates original short stories using LangGraph agents and Azure OpenAI, stores them in Notion as structured entries, and delivers them via Telegram using n8n automation.
 
 ## 🌟 Features
 
@@ -216,9 +216,6 @@ python test_notion_token.py
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
@@ -228,10 +225,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **n8n**: For workflow automation
 - **Telegram**: For story delivery platform
 
-## 📞 Support
-
-For support, please open an issue in the GitHub repository or contact the development team.
-
----
 
 **StoryWeaverAI** - Where AI meets creativity, one story at a time. 📚✨ 

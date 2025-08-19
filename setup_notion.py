@@ -7,33 +7,37 @@ import os
 import requests
 from dotenv import load_dotenv
 
+
 def check_env_vars():
     """Check if required environment variables are set."""
     load_dotenv()
-    
+
     required_vars = ["NOTION_TOKEN", "NOTION_DATABASE_ID"]
     missing_vars = []
-    
+
     for var in required_vars:
         if not os.getenv(var):
             missing_vars.append(var)
-    
+
     return missing_vars
+
 
 def test_notion_connection():
     """Test the Notion API connection."""
     try:
         from utils.notion_client import NotionStoryManager
+
         notion_manager = NotionStoryManager()
-        
+
         # Try to query the database
         response = notion_manager.get_story_pages(limit=1)
         print("✅ Notion connection successful!")
         return True
-        
+
     except Exception as e:
         print(f"❌ Notion connection failed: {e}")
         return False
+
 
 def create_sample_database_structure():
     """Provide instructions for creating the database structure."""
@@ -65,12 +69,13 @@ def create_sample_database_structure():
     print("8. Created time (Created time) - Auto-generated")
     print("9. Last edited time (Last edited time) - Auto-generated")
 
+
 def setup_instructions():
     """Provide step-by-step setup instructions."""
     print("🚀 Notion Integration Setup Guide")
     print("=" * 50)
     print()
-    
+
     print("Step 1: Create a Notion Integration")
     print("-" * 40)
     print("1. Go to https://www.notion.so/my-integrations")
@@ -80,7 +85,7 @@ def setup_instructions():
     print("5. Click 'Submit'")
     print("6. Copy the 'Internal Integration Token'")
     print()
-    
+
     print("Step 2: Create a Database")
     print("-" * 40)
     print("1. Create a new page in Notion")
@@ -90,25 +95,26 @@ def setup_instructions():
     print("5. Copy the database ID from the URL")
     print("   (The part after the last slash in the URL)")
     print()
-    
+
     print("Step 3: Configure Environment Variables")
     print("-" * 40)
     print("Add these to your .env file:")
     print("NOTION_TOKEN=your_integration_token_here")
     print("NOTION_DATABASE_ID=your_database_id_here")
     print()
-    
+
     create_sample_database_structure()
+
 
 def main():
     """Main setup function."""
     print("🔧 StoryWeaver AI - Notion Integration Setup")
     print("=" * 60)
     print()
-    
+
     # Check current environment
     missing_vars = check_env_vars()
-    
+
     if missing_vars:
         print(f"❌ Missing environment variables: {', '.join(missing_vars)}")
         print()
@@ -116,7 +122,7 @@ def main():
     else:
         print("✅ All environment variables are set!")
         print()
-        
+
         # Test connection
         if test_notion_connection():
             print("\n🎉 Setup complete! Your Notion integration is working.")
@@ -125,6 +131,7 @@ def main():
             print("\n⚠️  Connection test failed. Please check your configuration.")
             print()
             setup_instructions()
+
 
 if __name__ == "__main__":
     main()

@@ -43,6 +43,7 @@ if OPENAI_API_TYPE.lower() == "azure":
 else:
     client = OpenAI(api_key=OPENAI_API_KEY)
 
+
 # ------------------------------------------------------------------
 # Define state structure for LangGraph
 # ------------------------------------------------------------------
@@ -61,9 +62,10 @@ class StoryState(TypedDict, total=False):
 
     # final stitched story
     story: str
-    
+
     # Notion integration
     notion_page_id: str
+
 
 # ------------------------------------------------------------------
 # OpenAI call helper
@@ -87,6 +89,7 @@ def llm(prompt: str, max_tokens: int = 600) -> str:
         )
     content = resp.choices[0].message.content
     return content.strip() if content else ""
+
 
 # ------------------------------------------------------------------
 # Story Graph Nodes
@@ -113,6 +116,7 @@ Respond in 2-3 concise paragraphs.
 
     return {"setting": llm(prompt)}
 
+
 def make_characters(state: StoryState) -> StoryState:
     """Introduce main character(s) based on the setting."""
 
@@ -131,6 +135,7 @@ Return the characters as a bullet list.
 
     return {"characters": llm(prompt)}
 
+
 def make_conflict(state: StoryState) -> StoryState:
     """Introduce the central problem or tension in the story."""
 
@@ -145,6 +150,7 @@ Describe the CENTRAL CONFLICT that will drive the plot. Explain the main problem
 """
 
     return {"conflict": llm(prompt)}
+
 
 def make_resolution(state: StoryState) -> StoryState:
     """Provide a satisfying conclusion or resolution."""
@@ -164,6 +170,7 @@ Write a RESOLUTION that ties up the story in a satisfying way, addressing the co
 
     return {"resolution": llm(prompt)}
 
+
 def combine_story(state: StoryState) -> StoryState:
     """Combine all parts into a single readable story outline."""
 
@@ -178,21 +185,26 @@ def combine_story(state: StoryState) -> StoryState:
 
     return {"story": story}
 
+
 def save_to_notion(state: StoryState) -> StoryState:
     """Save the generated story to Notion database."""
-    
+
     try:
         # Check if Notion environment variables are set
         notion_token = os.getenv("NOTION_TOKEN")
         notion_db_id = os.getenv("NOTION_DATABASE_ID")
-        
-        print(f"Notion configuration: Token exists={bool(notion_token)}, DB ID exists={bool(notion_db_id)}")
+
+        print(
+            f"Notion configuration: Token exists={bool(notion_token)}, DB ID exists={bool(notion_db_id)}"
+        )
         print(f"Notion DB ID: {notion_db_id}")
-        
+
         if not notion_token or not notion_db_id:
-            print(f"⚠️ Missing Notion configuration: Token={bool(notion_token)}, DB ID={bool(notion_db_id)}")
+            print(
+                f"⚠️ Missing Notion configuration: Token={bool(notion_token)}, DB ID={bool(notion_db_id)}"
+            )
             return {"notion_page_id": ""}
-        
+
         # Initialize Notion client
         print("Initializing NotionStoryManager...")
         try:
@@ -201,9 +213,10 @@ def save_to_notion(state: StoryState) -> StoryState:
         except Exception as init_error:
             print(f"❌ Error initializing NotionStoryManager: {init_error}")
             import traceback
+
             print(traceback.format_exc())
             return {"notion_page_id": ""}
-        
+
         # Prepare story data for Notion
         story_data = {
             "prompt": state.get("prompt", ""),
@@ -212,29 +225,34 @@ def save_to_notion(state: StoryState) -> StoryState:
             "characters": state.get("characters", ""),
             "conflict": state.get("conflict", ""),
             "resolution": state.get("resolution", ""),
-            "story": state.get("story", "")
+            "story": state.get("story", ""),
         }
-        
+
         # Save to Notion
         print("Saving to Notion database...")
         try:
             response = notion_manager.create_story_page(story_data)
             # Add the Notion page ID to the state for reference
             notion_page_id = response.get("id", "")
-            print(f"✅ Successfully saved to Notion! Page ID: {notion_page_id[:8] if notion_page_id else 'None'}...")
+            print(
+                f"✅ Successfully saved to Notion! Page ID: {notion_page_id[:8] if notion_page_id else 'None'}..."
+            )
             return {"notion_page_id": notion_page_id}
         except Exception as create_error:
             print(f"❌ Error creating Notion page: {create_error}")
             import traceback
+
             print(traceback.format_exc())
             return {"notion_page_id": ""}
-        
+
     except Exception as e:
         print(f"❌ Error saving to Notion: {e}")
         import traceback
+
         print(traceback.format_exc())
         # Return empty dict to continue workflow even if Notion save fails
         return {"notion_page_id": ""}
+
 
 # ------------------------------------------------------------------
 # Build and compile the graph (4-stage workflow)
@@ -267,20 +285,20 @@ app = workflow.compile()
 # ------------------------------------------------------------------
 if __name__ == "__main__":
     user_input = input("Enter a theme or concept for story ideas: ")
-    
+
     # Run the synchronous LangGraph workflow
     result = app.invoke({"prompt": user_input})
-    
+
     # Display generated ideas
     if result.get("ideas"):
         print("\n💡 Generated Story Ideas:\n")
         print(result["ideas"])
-        print("\n" + "-"*50 + "\n")
-    
+        print("\n" + "-" * 50 + "\n")
+
     # Display the final story
     print("\n📖 Final Story Output:\n")
     print(result["story"])
-    
+
     # Show Notion integration status
     if result.get("notion_page_id"):
         print(f"\n✅ Story saved to Notion! Page ID: {result['notion_page_id']}")
