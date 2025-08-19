@@ -262,13 +262,13 @@ def save_to_notion(state: StoryState) -> StoryState:
 workflow = StateGraph(StoryState)
 
 # Add nodes to the graph
-workflow.add_node("generate_ideas", ideaAgentNode)  # New idea generator node
-workflow.add_node("setting", make_setting)
-workflow.add_node("characters", make_characters)
-workflow.add_node("conflict", make_conflict)
-workflow.add_node("resolution", make_resolution)
-workflow.add_node("combine", combine_story)
-workflow.add_node("save_to_notion", save_to_notion)
+workflow.add_node("generate_ideas", ideaAgentNode)  # type: ignore
+workflow.add_node("setting", make_setting)  # type: ignore
+workflow.add_node("characters", make_characters)  # type: ignore
+workflow.add_node("conflict", make_conflict)  # type: ignore
+workflow.add_node("resolution", make_resolution)  # type: ignore
+workflow.add_node("combine", combine_story)  # type: ignore
+workflow.add_node("save_to_notion", save_to_notion)  # type: ignore
 
 # Sequential flow with idea generator as the entry point
 workflow.set_entry_point("generate_ideas")
