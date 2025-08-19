@@ -5,6 +5,7 @@ from typing import TypedDict, Dict, Any
 
 from dotenv import load_dotenv
 from openai import AzureOpenAI, OpenAI
+client: OpenAI | AzureOpenAI  # Accept both types for mypy
 from langgraph.graph import StateGraph, END
 from utils.notion_client import NotionStoryManager
 from agents.idea_generator_agent import ideaAgentNode
@@ -287,7 +288,7 @@ if __name__ == "__main__":
     user_input = input("Enter a theme or concept for story ideas: ")
 
     # Run the synchronous LangGraph workflow
-    result = app.invoke({"prompt": user_input})
+    result = app.invoke({"prompt": user_input})  # type: ignore
 
     # Display generated ideas
     if result.get("ideas"):
