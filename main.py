@@ -5,6 +5,7 @@ from typing import TypedDict, Dict, Any
 
 from dotenv import load_dotenv
 from openai import AzureOpenAI, OpenAI
+
 client: OpenAI | AzureOpenAI  # Accept both types for mypy
 from langgraph.graph import StateGraph, END
 from utils.notion_client import NotionStoryManager
